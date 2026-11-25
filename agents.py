@@ -1,5 +1,5 @@
 from langchain.agents import create_agent
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openrouter import ChatOpenRouter
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser, PydanticOutputParser
 from pydantic import BaseModel, Field
@@ -19,9 +19,8 @@ class CriticPromptOutput(BaseModel):
     areas_to_improve: List[str]
     one_line_verdict: str = Field(description="one liner verdict for the report")
 
-
-
-model = ChatGoogleGenerativeAI(model=os.getenv("GEMINI_MODEL"))
+model = writer_model = ChatOpenRouter(model=os.getenv("WRITER_LLM_MODEL_NAME"))
+critic_model = ChatOpenRouter(model=os.getenv("CRITIC_LLM_MODEL_NAME"))
 str_parser = StrOutputParser()
 writer_pydantic_parser = PydanticOutputParser(pydantic_object=WriterPromptOutput)
 critic_pydantic_parser = PydanticOutputParser(pydantic_object=CriticPromptOutput)
@@ -50,7 +49,7 @@ writer_prompt = PromptTemplate(
     partial_variables={"structure": writer_pydantic_parser.get_format_instructions()}
 )
 
-writer_chain = writer_prompt | model | str_parser
+writer_chain = writer_prompt | writer_model | str_parser
 
 critic_prompt = PromptTemplate(
     template="""
@@ -63,4 +62,4 @@ critic_prompt = PromptTemplate(
     partial_variables={"structure": critic_pydantic_parser.get_format_instructions()}
 )
 
-critic_chain = critic_prompt | model | str_parser
+critic_chain = critic_prompt | critic_model | str_parser

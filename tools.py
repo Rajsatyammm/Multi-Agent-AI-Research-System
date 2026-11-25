@@ -23,7 +23,7 @@ def web_search(query: str) -> List[SearchResponse]:
     """
     results = tavily.search(
         query=query,
-        max_results=os.getenv("TAVILY_MAX_RESULTS", 5)
+        max_results=int(os.getenv("TAVILY_MAX_RESULTS", "5"))
     )
     response = []
     for res in results['results']:

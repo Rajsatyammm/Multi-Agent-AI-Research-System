@@ -1,12 +1,15 @@
 langchain
 langchain-core
 langchain-community
-langchain[google-genai]
+# langchain[google-genai]
+langchain-openrouter
+langchain-huggingface
 
 pydantic
 tavily-python
 beautifulsoup4
 requests
 lxml
-dotenv
-ipykernel
+python-dotenv
+fastapi
+uvicorn[standard]
